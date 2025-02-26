@@ -1,0 +1,57 @@
+﻿@model phoneCaseReworked.Controllers.PaymentHistoryViewModel
+
+@{
+    ViewData["Title"] = "Vendor Payment History";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div class="container">
+    <form asp-action="ViewPaymentHistory" method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-9">
+                <label for="vendorId" class="form-label">Select Vendor</label>
+                <select name="vendorId" id="vendorId" class="form-select" required>
+                    <option value="">-- Select Vendor --</option>
+                    @foreach (var vendor in Model.Vendors) {
+                        <option value="@vendor.VendorId" selected="@(Model.SelectedVendorId == vendor.VendorId ? "selected" : null)">
+                            @vendor.Name
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">View History</button>
+            </div>
+        </div>
+    </form>
+
+    @if (Model.SelectedVendor != null) {
+        <h4 class="mb-3">Payment History for @Model.SelectedVendor.Name</h4>
+
+        @if (Model.PaymentHistory.Any()) {
+            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th class="text-end">Amount Paid</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var payment in Model.PaymentHistory) {
+                            <tr>
+                                <td>@payment.PaymentDate.ToString("MM/dd/yyyy")</td>
+                                <td class="text-end">Rs. @payment.Amount</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        } else {
+            <div class="alert alert-info">No payments found for this vendor.</div>
+        }
+    } else if (Model.SelectedVendorId > 0) {
+        <div class="alert alert-warning">The selected vendor information could not be retrieved.</div>
+    }
+</div>

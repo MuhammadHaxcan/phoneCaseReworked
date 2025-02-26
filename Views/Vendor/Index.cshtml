@@ -1,0 +1,74 @@
+﻿@model phoneCaseReworked.Controllers.VendorViewModel
+
+@{
+    ViewData["Title"] = "Manage Vendors";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Add New Vendor</h4>
+            <form method="post" asp-action="AddVendor">
+                <div asp-validation-summary="All" class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="NewVendor.Name" class="form-label">Vendor Name</label>
+                    <input asp-for="NewVendor.Name" class="form-control" required />
+                    <span asp-validation-for="NewVendor.Name" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="NewVendor.ContactInfo" class="form-label">Contact Info</label>
+                    <input asp-for="NewVendor.ContactInfo" class="form-control" required />
+                    <span asp-validation-for="NewVendor.ContactInfo" class="text-danger"></span>
+                </div>
+
+                <input type="hidden" asp-for="NewVendor.TotalCredit" value="0.00" />
+
+                <button type="submit" class="btn btn-primary">Add Vendor</button>
+            </form>
+        </div>
+
+        <div class="col-md-6">
+            <h4>Vendor List</h4>
+            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                <ul class="list-group">
+                    @foreach (var vendor in Model.Vendors) {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <span>@vendor.Name - Credit: @vendor.TotalCredit</span>
+                            <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteVendorModal-@vendor.VendorId">
+                                Delete
+                            </button>
+
+                            <div class="modal fade" id="deleteVendorModal-@vendor.VendorId" tabindex="-1" aria-labelledby="deleteVendorLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteVendorLabel">Confirm Delete</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete vendor: <strong>@vendor.Name</strong>?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                            <form method="post" asp-action="DeleteVendor" asp-route-id="@vendor.VendorId">
+                                                <button type="submit" class="btn btn-danger">Delete</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

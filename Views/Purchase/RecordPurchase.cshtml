@@ -1,0 +1,56 @@
+﻿@model phoneCaseReworked.Controllers.PurchaseViewModel
+
+@{
+    ViewData["Title"] = "Record Purchase";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div class="container">
+    <form method="post" asp-action="SavePurchase">
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label class="form-label">Select Vendor</label>
+            <select asp-for="SelectedVendorId" class="form-select" required>
+                <option value="">-- Select Vendor --</option>
+                @foreach (var vendor in Model.Vendors) {
+                    <option value="@vendor.VendorId">@vendor.Name</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Purchase Date</label>
+            <input asp-for="PurchaseDate" type="date" class="form-control" required />
+        </div>
+
+        <h4>Product</h4>
+        <div class="product-row card mb-3 p-3">
+            <input type="hidden" name="Purchase.PurchaseId" value="@Model.Purchase?.PurchaseId" />
+            <div class="row">
+                <div class="col-md-5 mb-2">
+                    <label class="form-label">Product</label>
+                    <select asp-for="Purchase.ProductId" class="form-select" required>
+                        <option value="">-- Select Product --</option>
+                        @foreach (var product in Model.Products) {
+                            <option value="@product.ProductId" selected="@(Model.Purchase?.ProductId == product.ProductId ? "selected" : null)">
+                                @product.CaseName
+                            </option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2 mb-2">
+                    <label class="form-label">Quantity</label>
+                    <input asp-for="Purchase.Quantity" type="number" class="form-control" min="1" required />
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label class="form-label">Unit Price</label>
+                    <input asp-for="Purchase.UnitPrice" type="number" class="form-control" min="0.01" step="0.01" required />
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Purchase</button>
+    </form>
+</div>

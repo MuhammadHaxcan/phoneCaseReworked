@@ -1,0 +1,63 @@
+﻿@model phoneCaseReworked.Controllers.PaymentViewModel
+
+@{
+    ViewData["Title"] = "Make a Payment";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div class="container">
+    <form method="post" asp-action="SavePayment">
+        <div class="mb-3">
+            <label asp-for="Payment.VendorId" class="form-label">Select Vendor</label>
+            <select asp-for="Payment.VendorId" class="form-select" id="vendor-select" required>
+                <option value="">-- Select Vendor --</option>
+                @foreach (var vendor in Model.Vendors) {
+                    <option value="@vendor.VendorId">@vendor.Name</option>
+                }
+            </select>
+            <span asp-validation-for="Payment.VendorId" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Total Credit</label>
+            <input type="text" id="total-credit" class="form-control" readonly />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Payment.PaymentDate" class="form-label">Payment Date</label>
+            <input asp-for="Payment.PaymentDate" type="date" class="form-control" required />
+            <span asp-validation-for="Payment.PaymentDate" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Payment.Amount" class="form-label">Payment Amount</label>
+            <input asp-for="Payment.Amount" type="number" class="form-control" min="1000" step="0.01" required />
+            <span asp-validation-for="Payment.Amount" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Make Payment</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById("vendor-select").addEventListener("change", function () {
+            let vendorId = this.value;
+            let totalCreditField = document.getElementById("total-credit");
+
+            if (vendorId) {
+                fetch(`/Payment/GetVendorCredit?vendorId=${vendorId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        totalCreditField.value = data.success ? `Rs. ${data.totalCredit}` : "N/A";
+                    });
+            } else {
+                totalCreditField.value = "";
+            }
+        });
+
+        document.getElementById("Payment_PaymentDate").valueAsDate = new Date();
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,70 @@
+﻿@model phoneCaseReworked.Controllers.VendorPurchaseHistoryViewModel
+
+@{
+    ViewData["Title"] = "Vendor Purchase History";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+<div asp-validation-summary="All" class="alert alert-danger"></div>
+
+
+<div class="container">
+    <form asp-action="ViewPurchaseHistory" method="get" class="mb-4">
+        <div class="row">
+            <div class="col-md-9">
+                <label class="form-label">Select Vendor</label>
+                <select name="vendorId" class="form-select" required>
+                    <option value="">-- Select Vendor --</option>
+                    @foreach (var vendor in Model.Vendors) {
+                        <option value="@vendor.VendorId" selected="@(Model.SelectedVendorId == vendor.VendorId ? "selected" : null)">
+                            @vendor.Name
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">View History</button>
+            </div>
+        </div>
+    </form>
+
+    @if (Model.SelectedVendor != null) {
+        <h4 class="mb-3">Purchase History for @Model.SelectedVendor.Name</h4>
+
+        @if (Model.PurchaseHistory.Any()) {
+            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Product Name</th>
+                            <th class="text-end">Quantity</th>
+                            <th class="text-end">Total Price</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var purchase in Model.PurchaseHistory) {
+                            <tr>
+                                <td>@purchase.PurchaseDate.ToString("MM/dd/yyyy")</td>
+                                <td>@(purchase.Product?.CaseName ?? "Unknown Product")</td>
+                                <td class="text-end">@purchase.Quantity</td>
+                                <td class="text-end">Rs. @(purchase.Quantity * purchase.UnitPrice)</td>
+                                <td class="text-end">
+                                    <a asp-action="RecordPurchase" asp-route-purchaseId="@purchase.PurchaseId" class="btn btn-sm btn-warning">Edit</a>
+
+                                    <form asp-action="DeletePurchase" method="post" style="display:inline;">
+                                        <input type="hidden" name="purchaseId" value="@purchase.PurchaseId" />
+                                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        } else {
+            <div class="alert alert-info">No purchases found for this vendor.</div>
+        }
+    }
+    
