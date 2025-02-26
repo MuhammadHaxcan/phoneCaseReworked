@@ -1,0 +1,36 @@
+﻿@model List<phoneCaseReworked.Models.Purchase>
+
+@{
+    ViewData["Title"] = "Purchase Details";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+@if (Model.Any()) {
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Model</th>
+                <th>Case Manufacturer</th>
+                <th class="text-end">Quantity</th>
+                <th class="text-end">Unit Price</th>
+                <th class="text-end">Total Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var purchase in Model) {
+                <tr>
+                    <td>@purchase.Product?.CaseName</td>
+                    <td>@purchase.Product?.Model?.Name</td>
+                    <td>@purchase.Product?.CaseManufacturer?.Name</td>
+                    <td class="text-end">@purchase.Quantity</td>
+                    <td class="text-end">Rs. @purchase.UnitPrice</td>
+                    <td class="text-end">Rs. @(purchase.Quantity * purchase.UnitPrice)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+} else {
+    <div class="alert alert-info">No purchase details found.</div>
+}

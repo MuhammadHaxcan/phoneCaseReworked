@@ -1,0 +1,33 @@
+﻿@{
+    ViewData["Title"] = "Vendor Ledger";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+
+<div class="container">
+    <form asp-action="VendorLedger" method="post" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Select Vendor</label>
+                <select name="vendorId" class="form-select" required>
+                    <option value="">-- Select Vendor --</option>
+                    @foreach (var vendor in ViewBag.Vendors) {
+                        <option value="@vendor.VendorId">@vendor.Name</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Filter</label>
+                <select name="filter" class="form-select">
+                    <option value="all">All Time</option>
+                    <option value="week">Last 7 Days</option>
+                    <option value="month">Last 30 Days</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">View Ledger</button>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,71 @@
+﻿@model List<phoneCaseReworked.Controllers.LedgerTransactionViewModel>
+
+@{
+    ViewData["Title"] = "Vendor Ledger";
+}
+
+<h2 class="mb-4">@ViewData["Title"]</h2>
+
+<div class="container">
+    <form asp-action="VendorLedger" method="post" class="mb-4">
+        <div class="row">
+            <div class="col-md-6">
+                <label class="form-label">Select Vendor</label>
+                <select name="vendorId" class="form-select" required>
+                    <option value="">-- Select Vendor --</option>
+                    @foreach (var vendor in ViewBag.Vendors) {
+                        <option value="@vendor.VendorId" selected="@(ViewBag.SelectedVendor != null && ViewBag.SelectedVendor == vendor.VendorId ? "selected" : null)">
+                            @vendor.Name
+                        </option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">Filter</label>
+                <select name="filter" class="form-select">
+                    <option value="all" selected="@(ViewBag.SelectedFilter == "all" ? "selected" : null)">All Time</option>
+                    <option value="week" selected="@(ViewBag.SelectedFilter == "week" ? "selected" : null)">Last 7 Days</option>
+                    <option value="month" selected="@(ViewBag.SelectedFilter == "month" ? "selected" : null)">Last 30 Days</option>
+                </select>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">View Ledger</button>
+            </div>
+        </div>
+    </form>
+
+    @if (Model.Any()) {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th class="text-end">Debit</th>
+                    <th class="text-end">Credit</th>
+                    <th class="text-end">Remaining Balance</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var transaction in Model) {
+                    <tr>
+                        <td>@transaction.Date.ToString("MM/dd/yyyy")</td>
+                        <td>
+                            @if (transaction.TransactionType == "purchase" && transaction.PurchaseIds.Any()) {
+                                <a asp-action="PurchaseDetails" asp-route-purchaseIds="@string.Join(",", transaction.PurchaseIds)">
+                                    @transaction.Description
+                                </a>
+                            } else {
+                                @transaction.Description
+                            }
+                        </td>
+                        <td class="text-end">Rs. @(transaction.Debit.ToString("N2"))</td>
+                        <td class="text-end">Rs. @(transaction.Credit.ToString("N2"))</td>
+                        <td class="text-end"><strong>Rs. @(transaction.RemainingBalance.ToString("N2"))</strong></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    } else {
+        <div class="alert alert-info">No transactions found.</div>
+    }
+</div>
