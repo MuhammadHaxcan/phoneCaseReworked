@@ -31,15 +31,6 @@ namespace phoneCaseReworked.Controllers {
             return RedirectToAction("Index");
         }
 
-        [HttpPost]
-        public async Task<IActionResult> DeleteVendor(int id) {
-            var vendor = await _context.Vendors.FindAsync(id);
-            if (vendor != null) {
-                _context.Vendors.Remove(vendor);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction("Index");
-        }
     }
 
     public class VendorViewModel {

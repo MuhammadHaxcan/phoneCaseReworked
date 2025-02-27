@@ -8,12 +8,13 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/phoneCaseReworked.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
 </head>
 <body>
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Ledger" asp-action="VendorLedger">phoneCaseReworked</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -21,9 +22,17 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
 
+                        <!-- Manage Vendors -->
+                        <li class="nav-item">
+                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Ledger" asp-action="Index">
+                                <i class="fas fa-user-tie" style="color: #007bff;"></i> Ledger
+                            </a>
+                        </li>
+
+                        <!-- Manage Products -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarProductDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Manage Products
+                            <a class="nav-link dropdown-toggle text-dark fw-bold" href="#" id="navbarProductDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-box-open" style="color: #28a745;"></i> Manage Products
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarProductDropdown">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index">Products</a></li>
@@ -31,13 +40,18 @@
                             </ul>
                         </li>
 
+                        <!-- Manage Vendors -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Vendor" asp-action="Index">Manage Vendors</a>
+                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Vendor" asp-action="Index">
+                                <i class="fas fa-user-tie" style="color: #007bff;"></i> Manage Vendors
+                            </a>
                         </li>
 
+
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarPurchaseDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Manage Purchases
+                            <!-- Manage Purchases -->
+                            <a class="nav-link dropdown-toggle text-dark fw-bold" href="#" id="navbarPurchaseDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-shopping-cart" style="color: #dc3545;"></i> Manage Purchases
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarPurchaseDropdown">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Purchase" asp-action="RecordPurchase">Record Purchase</a></li>
@@ -46,8 +60,9 @@
                         </li>
 
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="navbarPaymentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Manage Payments
+                            <!-- Manage Payments -->
+                            <a class="nav-link dropdown-toggle text-dark fw-bold" href="#" id="navbarPaymentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-credit-card" style="color: #17a2b8;"></i> Manage Payments
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarPaymentDropdown">
                                 <li><a class="dropdown-item" asp-area="" asp-controller="Payment" asp-action="MakePayment">Make Payment</a></li>
