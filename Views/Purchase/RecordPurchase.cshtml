@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Record Purchase";
+    var today = DateTime.UtcNow;
+    var minDate = today.AddDays(-7).ToString("yyyy-MM-dd"); // ✅ Restrict to last 7 days
+    var maxDate = today.ToString("yyyy-MM-dd"); // ✅ No future dates allowed
 }
 
 <h2 class="mb-4">@ViewData["Title"]</h2>
@@ -23,7 +26,8 @@
 
         <div class="mb-3">
             <label class="form-label">Purchase Date</label>
-            <input asp-for="PurchaseDate" type="date" class="form-control" required />
+            <input asp-for="PurchaseDate" type="date" class="form-control"
+                   min="@minDate" max="@maxDate" required />
         </div>
 
         <h4>Product</h4>
