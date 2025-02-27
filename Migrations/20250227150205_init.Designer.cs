@@ -12,8 +12,8 @@ using phoneCaseReworked.Models;
 namespace phoneCaseReworked.Migrations
 {
     [DbContext(typeof(PhoneCaseDbContext))]
-    [Migration("20250225041408_updated dateonly to datetime")]
-    partial class updateddateonlytodatetime
+    [Migration("20250227150205_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

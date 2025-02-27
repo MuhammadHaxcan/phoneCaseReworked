@@ -87,7 +87,7 @@ namespace phoneCaseReworked.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     VendorId = table.Column<int>(type: "int", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    PaymentDate = table.Column<DateOnly>(type: "date", nullable: false)
+                    PaymentDate = table.Column<DateTime>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -110,7 +110,7 @@ namespace phoneCaseReworked.Migrations
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    PurchaseDate = table.Column<DateOnly>(type: "date", nullable: false)
+                    PurchaseDate = table.Column<DateTime>(type: "date", nullable: false)
                 },
                 constraints: table =>
                 {
