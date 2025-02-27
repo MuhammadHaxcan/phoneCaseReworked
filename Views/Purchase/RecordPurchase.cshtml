@@ -3,18 +3,17 @@
 @{
     ViewData["Title"] = "Record Purchase";
     var today = DateTime.UtcNow;
-    var minDate = today.AddDays(-7).ToString("yyyy-MM-dd"); // ✅ Restrict to last 7 days
-    var maxDate = today.ToString("yyyy-MM-dd"); // ✅ No future dates allowed
+    var minDate = today.AddDays(-7).ToString("yyyy-MM-dd");
+    var maxDate = today.ToString("yyyy-MM-dd"); 
 }
 
 <h2 class="mb-4">@ViewData["Title"]</h2>
 
 <div class="container">
     <form method="post" asp-action="SavePurchase">
-        <div asp-validation-summary="All" class="text-danger"></div>
 
         <div class="mb-3">
-            <label class="form-label">Select Vendor</label>
+            <label asp-for="SelectedVendorId" class="form-label">Select Vendor</label>
             <select asp-for="SelectedVendorId" class="form-select" required>
                 <option value="">-- Select Vendor --</option>
                 @foreach (var vendor in Model.Vendors)
@@ -22,12 +21,14 @@
                     <option value="@vendor.VendorId">@vendor.Name</option>
                 }
             </select>
+            <span asp-validation-for="SelectedVendorId" class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label class="form-label">Purchase Date</label>
+            <label asp-for="PurchaseDate" class="form-label">Purchase Date</label>
             <input asp-for="PurchaseDate" type="date" class="form-control"
                    min="@minDate" max="@maxDate" required />
+            <span asp-validation-for="PurchaseDate" class="text-danger"></span>
         </div>
 
         <h4>Product</h4>
@@ -35,7 +36,7 @@
             <input type="hidden" name="Purchase.PurchaseId" value="@Model.Purchase?.PurchaseId" />
             <div class="row">
                 <div class="col-md-5 mb-2">
-                    <label class="form-label">Product</label>
+                    <label asp-for="Purchase.ProductId" class="form-label">Product</label>
                     <select asp-for="Purchase.ProductId" class="form-select" required>
                         <option value="">-- Select Product --</option>
                         @foreach (var product in Model.Products)
@@ -46,14 +47,17 @@
                             </option>
                         }
                     </select>
+                    <span asp-validation-for="Purchase.ProductId" class="text-danger"></span>
                 </div>
                 <div class="col-md-2 mb-2">
-                    <label class="form-label">Quantity</label>
+                    <label asp-for="Purchase.Quantity" class="form-label">Quantity</label>
                     <input asp-for="Purchase.Quantity" type="number" class="form-control" min="1" required />
+                    <span asp-validation-for="Purchase.Quantity" class="text-danger"></span>
                 </div>
                 <div class="col-md-3 mb-2">
-                    <label class="form-label">Unit Price</label>
+                    <label asp-for="Purchase.UnitPrice" class="form-label">Unit Price</label>
                     <input asp-for="Purchase.UnitPrice" type="number" class="form-control" min="0.01" step="0.01" required />
+                    <span asp-validation-for="Purchase.UnitPrice" class="text-danger"></span> 
                 </div>
             </div>
         </div>
@@ -61,3 +65,7 @@
         <button type="submit" class="btn btn-primary">Save Purchase</button>
     </form>
 </div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
