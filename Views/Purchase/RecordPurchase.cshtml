@@ -14,7 +14,8 @@
             <label class="form-label">Select Vendor</label>
             <select asp-for="SelectedVendorId" class="form-select" required>
                 <option value="">-- Select Vendor --</option>
-                @foreach (var vendor in Model.Vendors) {
+                @foreach (var vendor in Model.Vendors)
+                {
                     <option value="@vendor.VendorId">@vendor.Name</option>
                 }
             </select>
@@ -33,9 +34,11 @@
                     <label class="form-label">Product</label>
                     <select asp-for="Purchase.ProductId" class="form-select" required>
                         <option value="">-- Select Product --</option>
-                        @foreach (var product in Model.Products) {
+                        @foreach (var product in Model.Products)
+                        {
+                            var productDisplay = $"{product.CaseName} ({product.Model?.Name ?? "Unknown Model"} - {product.CaseManufacturer?.Name ?? "Unknown Manufacturer"})";
                             <option value="@product.ProductId" selected="@(Model.Purchase?.ProductId == product.ProductId ? "selected" : null)">
-                                @product.CaseName
+                                @productDisplay
                             </option>
                         }
                     </select>

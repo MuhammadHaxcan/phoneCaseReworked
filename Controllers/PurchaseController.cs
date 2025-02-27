@@ -12,7 +12,10 @@ namespace phoneCaseReworked.Controllers {
 
         public async Task<IActionResult> RecordPurchase(int? purchaseId) {
             var vendors = await _context.Vendors.ToListAsync();
-            var products = await _context.Products.ToListAsync();
+            var products = await _context.Products
+                .Include(p => p.Model)
+                .Include(p => p.CaseManufacturer)
+                .ToListAsync();
 
             var viewModel = new PurchaseViewModel {
                 Vendors = vendors,
@@ -153,7 +156,6 @@ namespace phoneCaseReworked.Controllers {
         }
 
     }
-
 
 
     public class PurchaseViewModel {
