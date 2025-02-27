@@ -45,6 +45,13 @@ namespace phoneCaseReworked.Controllers {
                 return View("MakePayment", viewModel);
             }
 
+            decimal remainingVendorCredit = vendor.TotalCredit;
+            if (viewModel.Payment.Amount > remainingVendorCredit) {
+                ModelState.AddModelError("Payment.Amount", $"Payment cannot exceed vendor's total credit of Rs. {remainingVendorCredit:N2}.");
+                viewModel.Vendors = await _context.Vendors.ToListAsync();
+                return View("MakePayment", viewModel);
+            }
+
             decimal totalPurchasesTillDate = await _context.Purchases
                 .Where(p => p.VendorId == viewModel.Payment.VendorId && p.PurchaseDate <= viewModel.Payment.PaymentDate)
                 .SumAsync(p => p.Quantity * p.UnitPrice);
@@ -56,13 +63,14 @@ namespace phoneCaseReworked.Controllers {
             decimal remainingAmountTillDate = totalPurchasesTillDate - totalPaymentsTillDate;
 
             if (viewModel.Payment.Amount > remainingAmountTillDate) {
-                ModelState.AddModelError("Payment.Amount", $"Payment cannot exceed Rs. {remainingAmountTillDate}, which is the remaining amount available till {viewModel.Payment.PaymentDate:MM/dd/yyyy}.");
+                ModelState.AddModelError("Payment.Amount", $"Payment cannot exceed Rs. {remainingAmountTillDate:N2}, which is the remaining amount available till {viewModel.Payment.PaymentDate:MM/dd/yyyy}.");
                 viewModel.Vendors = await _context.Vendors.ToListAsync();
                 return View("MakePayment", viewModel);
             }
 
             vendor.TotalCredit -= viewModel.Payment.Amount;
 
+         
             _context.Payments.Add(new Payment {
                 VendorId = viewModel.Payment.VendorId,
                 Amount = viewModel.Payment.Amount,
@@ -74,7 +82,6 @@ namespace phoneCaseReworked.Controllers {
 
             return RedirectToAction("MakePayment");
         }
-
 
         public async Task<IActionResult> ViewPaymentHistory(int? vendorId) {
             var vendors = await _context.Vendors.ToListAsync();
