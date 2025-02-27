@@ -124,7 +124,7 @@ namespace phoneCaseReworked.Controllers {
             }
 
             bool hasPayments = await _context.Payments
-                .AnyAsync(p => p.VendorId == purchase.VendorId && p.PaymentDate > purchase.PurchaseDate);
+                .AnyAsync(p => p.VendorId == purchase.VendorId && p.PaymentDate >= purchase.PurchaseDate);
 
             if (hasPayments) {
                 ModelState.AddModelError("", "This purchase cannot be deleted because a payment has been recorded after this purchase date.");
