@@ -346,7 +346,7 @@ ASALocalRun/
 
 # Migrations folder
 Migrations/
-
+appsettings.json
 # MFractors (Xamarin productivity tool) working folder
 .mfractor/
 

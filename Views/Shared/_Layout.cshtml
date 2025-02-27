@@ -3,88 +3,265 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - phoneCaseReworked</title>
+    <title>Phone Case Management</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/phoneCaseReworked.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #0d47a1;
+            --secondary: #f8f9fa;
+            --text-primary: #202124;
+            --text-secondary: #5f6368;
+            --accent: #4285f4;
+            --danger: #ea4335;
+            --success: #34a853;
+            --warning: #fbbc05;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: var(--text-primary);
+        }
+
+        /* Modern Navbar Styling */
+        .navbar-modern {
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+            padding: 0.5rem 1.5rem;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: var(--primary) !important;
+            font-size: 1.3rem;
+        }
+
+        .nav-link {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.8rem 1rem !important;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+            .nav-link:hover, .nav-link.active {
+                color: var(--primary) !important;
+            }
+
+            .nav-link::after {
+                content: '';
+                position: absolute;
+                width: 0;
+                height: 3px;
+                bottom: 0;
+                left: 50%;
+                background-color: var(--primary);
+                transition: all 0.3s ease;
+                transform: translateX(-50%);
+            }
+
+            .nav-link:hover::after, .nav-link.active::after {
+                width: 70%;
+            }
+
+        .navbar-toggler {
+            border: none;
+            padding: 0.25rem;
+        }
+
+            .navbar-toggler:focus {
+                box-shadow: none;
+            }
+
+        /* Dropdown styling */
+        .dropdown-menu {
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border: none;
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .dropdown-item {
+            color: var(--text-secondary);
+            border-radius: 6px;
+            padding: 0.6rem 1rem;
+            margin: 0.2rem 0;
+        }
+
+            .dropdown-item:hover, .dropdown-item:focus {
+                background-color: rgba(26, 115, 232, 0.1);
+                color: var(--primary);
+            }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-action {
+            border-radius: 50px;
+            padding: 0.5rem 1.25rem;
+            font-weight: 500;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary-action {
+            background-color: var(--primary);
+            border: none;
+            color: white;
+        }
+
+            .btn-primary-action:hover {
+                background-color: var(--primary-dark);
+                transform: translateY(-1px);
+            }
+
+        .btn-secondary-action {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+            .btn-secondary-action:hover {
+                background-color: rgba(26, 115, 232, 0.1);
+            }
+
+        /* Main content area */
+        .content-container {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .page-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Icons styling */
+        .icon-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: rgba(26, 115, 232, 0.1);
+            margin-right: 10px;
+        }
+
+            .icon-container i {
+                color: var(--primary);
+                font-size: 1rem;
+            }
+    </style>
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-lg navbar-modern">
             <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
+                <!-- Brand -->
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-mobile-alt me-2"></i> PCM
+                </a>
 
-                        <!-- Manage Vendors -->
+                <!-- Toggle Button for Small Screens -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars text-primary"></i>
+                </button>
+
+                <!-- Navbar Items -->
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <!-- Ledger -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Ledger" asp-action="Index">
-                                <i class="fas fa-user-tie" style="color: #007bff;"></i> Ledger
+                            <a class="nav-link" asp-area="" asp-controller="Ledger" asp-action="Index">
+                                <i class="fas fa-book me-1"></i> Ledger
                             </a>
                         </li>
 
                         <!-- Manage Products -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark fw-bold" href="#" id="navbarProductDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-box-open" style="color: #28a745;"></i> Manage Products
+                            <a class="nav-link dropdown-toggle" href="#" id="productDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-box me-1"></i> Products
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarProductDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Product" asp-action="Index">Products</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="ProductMeta" asp-action="Index">Product Metadata</a></li>
+                            <ul class="dropdown-menu" aria-labelledby="productDropdown">
+                                <li><a class="dropdown-item" asp-controller="Product" asp-action="Index">View Products</a></li>
+                                <li><a class="dropdown-item" asp-controller="ProductMeta" asp-action="Index">Product Metadata</a></li>
                             </ul>
                         </li>
 
                         <!-- Manage Vendors -->
                         <li class="nav-item">
-                            <a class="nav-link text-dark fw-bold" asp-area="" asp-controller="Vendor" asp-action="Index">
-                                <i class="fas fa-user-tie" style="color: #007bff;"></i> Manage Vendors
+                            <a class="nav-link" asp-area="" asp-controller="Vendor" asp-action="Index">
+                                <i class="fas fa-handshake me-1"></i> Vendors
                             </a>
                         </li>
 
-
+                        <!-- Manage Purchases -->
                         <li class="nav-item dropdown">
-                            <!-- Manage Purchases -->
-                            <a class="nav-link dropdown-toggle text-dark fw-bold" href="#" id="navbarPurchaseDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-shopping-cart" style="color: #dc3545;"></i> Manage Purchases
+                            <a class="nav-link dropdown-toggle" href="#" id="purchaseDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-shopping-cart me-1"></i> Purchases
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarPurchaseDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Purchase" asp-action="RecordPurchase">Record Purchase</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Purchase" asp-action="ViewPurchaseHistory">View Purchase History</a></li>
+                            <ul class="dropdown-menu" aria-labelledby="purchaseDropdown">
+                                <li><a class="dropdown-item" asp-controller="Purchase" asp-action="RecordPurchase">Record Purchase</a></li>
+                                <li><a class="dropdown-item" asp-controller="Purchase" asp-action="ViewPurchaseHistory">Purchase History</a></li>
                             </ul>
                         </li>
 
+                        <!-- Manage Payments -->
                         <li class="nav-item dropdown">
-                            <!-- Manage Payments -->
-                            <a class="nav-link dropdown-toggle text-dark fw-bold" href="#" id="navbarPaymentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-credit-card" style="color: #17a2b8;"></i> Manage Payments
+                            <a class="nav-link dropdown-toggle" href="#" id="paymentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-credit-card me-1"></i> Payments
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarPaymentDropdown">
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Payment" asp-action="MakePayment">Make Payment</a></li>
-                                <li><a class="dropdown-item" asp-area="" asp-controller="Payment" asp-action="ViewPaymentHistory">View Payment History</a></li>
+                            <ul class="dropdown-menu" aria-labelledby="paymentDropdown">
+                                <li><a class="dropdown-item" asp-controller="Payment" asp-action="MakePayment">Make Payment</a></li>
+                                <li><a class="dropdown-item" asp-controller="Payment" asp-action="ViewPaymentHistory">Payment History</a></li>
                             </ul>
                         </li>
-
                     </ul>
+
+                    <!-- Right Top Buttons -->
+                    <div class="action-buttons">
+                        <a class="btn btn-secondary-action" asp-controller="Payment" asp-action="MakePayment">
+                            <i class="fas fa-money-bill-wave"></i> Make Payment
+                        </a>
+                        <a class="btn btn-primary-action" asp-controller="Purchase" asp-action="RecordPurchase">
+                            <i class="fas fa-plus"></i> Record Purchase
+                        </a>
+                    </div>
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container">
+    <div class="container mt-4">
         <main role="main" class="pb-3">
-            @RenderBody()
+            <div class="content-container">
+                @RenderBody()
+            </div>
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - phoneCaseReworked
+    <footer class="border-top footer mt-5 py-3 bg-white">
+        <div class="container text-center text-muted">
+            <small>&copy; 2025 Phone Case Management. All rights reserved.</small>
         </div>
     </footer>
 

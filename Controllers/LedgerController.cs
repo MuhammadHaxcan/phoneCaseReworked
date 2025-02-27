@@ -10,13 +10,11 @@ namespace phoneCaseReworked.Controllers {
             _context = context;
         }
 
-        // ✅ Show Vendors for Ledger View
         public async Task<IActionResult> Index() {
             ViewBag.Vendors = await _context.Vendors.ToListAsync();
             return View();
         }
 
-        // ✅ Fetch Transactions for Selected Vendor
         [HttpPost]
         public async Task<IActionResult> VendorLedger(int vendorId, string filter) {
             var vendor = await _context.Vendors.FirstOrDefaultAsync(v => v.VendorId == vendorId);
@@ -26,15 +24,8 @@ namespace phoneCaseReworked.Controllers {
                 return View("Index");
             }
 
-            DateTime startDate = filter switch {
-                "week" => DateTime.Now.AddDays(-7),
-                "month" => DateTime.Now.AddMonths(-1),
-                _ => DateTime.MinValue
-            };
-
-            // ✅ Fetch Purchases
             var purchases = await _context.Purchases
-                .Where(p => p.VendorId == vendorId && p.PurchaseDate >= startDate)
+                .Where(p => p.VendorId == vendorId)
                 .Select(p => new LedgerTransactionViewModel {
                     Date = p.PurchaseDate.Date,
                     Description = "Purchase",
@@ -45,9 +36,8 @@ namespace phoneCaseReworked.Controllers {
                 })
                 .ToListAsync();
 
-            // ✅ Fetch Payments
             var payments = await _context.Payments
-                .Where(p => p.VendorId == vendorId && p.PaymentDate >= startDate)
+                .Where(p => p.VendorId == vendorId)
                 .Select(p => new LedgerTransactionViewModel {
                     Date = p.PaymentDate.Date,
                     Description = "Payment",
@@ -58,14 +48,11 @@ namespace phoneCaseReworked.Controllers {
                 })
                 .ToListAsync();
 
-            // ✅ Combine Transactions and Order them Correctly
             var transactions = purchases.Concat(payments)
-                .OrderBy(t => t.Date) // Ensure chronological order
+                .OrderBy(t => t.Date)
                 .ToList();
 
-            // ✅ Fix Running Balance Calculation
-            decimal runningBalance = 0; // Correct starting balance
-
+            decimal runningBalance = 0;
             foreach (var transaction in transactions) {
                 if (transaction.TransactionType == "purchase") {
                     runningBalance += transaction.Debit;
@@ -75,29 +62,21 @@ namespace phoneCaseReworked.Controllers {
                 transaction.RemainingBalance = runningBalance;
             }
 
-            // ✅ Group Transactions by Date & Summarize
-            var groupedTransactions = transactions
-                .GroupBy(t => t.Date)
-                .Select(g => new LedgerTransactionViewModel {
-                    Date = g.Key,
-                    Description = string.Join(" | ", g.Select(t => t.Description).Distinct()), // Remove duplicates
-                    Debit = g.Sum(t => t.Debit),
-                    Credit = g.Sum(t => t.Credit),
-                    RemainingBalance = g.Last().RemainingBalance, // Ensure correct balance display
-                    TransactionType = g.Any(t => t.TransactionType == "purchase") ? "purchase" : "payment",
-                    PurchaseIds = g.SelectMany(t => t.PurchaseIds).Distinct().ToList() // Remove duplicate purchase IDs
-                })
-                .OrderBy(t => t.Date)
-                .ToList();
+            DateTime filterStartDate = filter switch {
+                "week" => DateTime.Now.AddDays(-7),
+                "month" => DateTime.Now.AddMonths(-1),
+                _ => DateTime.MinValue
+            };
+
+            var filteredTransactions = transactions.Where(t => t.Date >= filterStartDate).ToList();
 
             ViewBag.Vendors = await _context.Vendors.ToListAsync();
             ViewBag.SelectedVendor = vendorId;
             ViewBag.SelectedFilter = filter;
 
-            return View(groupedTransactions);
+            return View(filteredTransactions);
         }
 
-        // ✅ Show Details for Purchases on a Specific Date
         public async Task<IActionResult> PurchaseDetails(string purchaseIds) {
             if (string.IsNullOrEmpty(purchaseIds)) {
                 return NotFound("No purchase IDs provided.");
@@ -129,7 +108,6 @@ namespace phoneCaseReworked.Controllers {
         }
     }
 
-    // ✅ Ledger Transaction ViewModel
     public class LedgerTransactionViewModel {
         public DateTime Date { get; set; }
         public string Description { get; set; }
