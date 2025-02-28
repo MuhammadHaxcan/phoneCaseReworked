@@ -1,12 +1,10 @@
-﻿@model phoneCaseReworked.Controllers.VendorPurchaseHistoryViewModel
+﻿@model phoneCaseReworked.ViewModels.VendorPurchaseHistoryViewModel
 
 @{
     ViewData["Title"] = "Vendor Purchase History";
 }
 
 <h2 class="mb-4">@ViewData["Title"]</h2>
-<div asp-validation-summary="All" class="alert alert-danger"></div>
-
 
 <div class="container">
     <form asp-action="ViewPurchaseHistory" method="get" class="mb-4">
@@ -15,12 +13,14 @@
                 <label class="form-label">Select Vendor</label>
                 <select name="vendorId" class="form-select" required>
                     <option value="">-- Select Vendor --</option>
-                    @foreach (var vendor in Model.Vendors) {
+                    @foreach (var vendor in Model.Vendors)
+                    {
                         <option value="@vendor.VendorId" selected="@(Model.SelectedVendorId == vendor.VendorId ? "selected" : null)">
                             @vendor.Name
                         </option>
                     }
                 </select>
+                <span class="text-danger" asp-validation-for="SelectedVendorId"></span>
             </div>
             <div class="col-md-3 d-flex align-items-end">
                 <button type="submit" class="btn btn-primary w-100">View History</button>
@@ -28,10 +28,12 @@
         </div>
     </form>
 
-    @if (Model.SelectedVendor != null) {
+    @if (Model.SelectedVendor != null)
+    {
         <h4 class="mb-3">Purchase History for @Model.SelectedVendor.Name</h4>
 
-        @if (Model.PurchaseHistory.Any()) {
+        @if (Model.PurchaseHistory.Any())
+        {
             <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
                 <table class="table">
                     <thead>
@@ -44,7 +46,8 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var purchase in Model.PurchaseHistory) {
+                        @foreach (var purchase in Model.PurchaseHistory)
+                        {
                             <tr>
                                 <td>@purchase.PurchaseDate.ToString("MM/dd/yyyy")</td>
                                 <td>@(purchase.Product?.CaseName ?? "Unknown Product")</td>
@@ -56,6 +59,7 @@
                                     <form asp-action="DeletePurchase" method="post" style="display:inline;">
                                         <input type="hidden" name="purchaseId" value="@purchase.PurchaseId" />
                                         <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        <span class="text-danger" asp-validation-for="PurchaseHistory"></span>
                                     </form>
                                 </td>
                             </tr>
@@ -63,8 +67,10 @@
                     </tbody>
                 </table>
             </div>
-        } else {
+        }
+        else
+        {
             <div class="alert alert-info">No purchases found for this vendor.</div>
         }
     }
-    
+</div>

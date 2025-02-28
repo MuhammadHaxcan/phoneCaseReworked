@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using phoneCaseReworked.Models;
+using phoneCaseReworked.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -43,10 +44,4 @@ namespace phoneCaseReworked.Controllers {
         }
     }
 
-    public class ProductViewModel {
-        public List<Product> Products { get; set; }
-        public List<PhoneModel> PhoneModels { get; set; }
-        public List<CaseManufacturer> CaseManufacturers { get; set; }
-        public Product Product { get; set; } = new Product();
-    }
 }

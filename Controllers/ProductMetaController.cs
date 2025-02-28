@@ -1,19 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using phoneCaseReworked.Models;
+using phoneCaseReworked.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace phoneCaseReworked.Controllers {
-    public class ProductMetaController : Controller {
+namespace phoneCaseReworked.Controllers
+{
+    public class ProductMetaController : Controller
+    {
         private readonly PhoneCaseDbContext _context;
 
-        public ProductMetaController(PhoneCaseDbContext context) {
+        public ProductMetaController(PhoneCaseDbContext context)
+        {
             _context = context;
         }
 
-        public async Task<IActionResult> Index() {
-            var viewModel = new ProductMetaViewModel {
+        public async Task<IActionResult> Index()
+        {
+            var viewModel = new ProductMetaViewModel
+            {
                 CaseManufacturers = await _context.CaseManufacturers.ToListAsync(),
                 PhoneModels = await _context.PhoneModels.ToListAsync()
             };
@@ -21,8 +27,10 @@ namespace phoneCaseReworked.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddCaseManufacturer(string name) {
-            if (!string.IsNullOrEmpty(name)) {
+        public async Task<IActionResult> AddCaseManufacturer(string name)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
                 var manufacturer = new CaseManufacturer { Name = name };
                 _context.CaseManufacturers.Add(manufacturer);
                 await _context.SaveChangesAsync();
@@ -31,18 +39,15 @@ namespace phoneCaseReworked.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddPhoneModel(string name) {
-            if (!string.IsNullOrEmpty(name)) {
+        public async Task<IActionResult> AddPhoneModel(string name)
+        {
+            if (!string.IsNullOrEmpty(name))
+            {
                 var model = new PhoneModel { Name = name };
                 _context.PhoneModels.Add(model);
                 await _context.SaveChangesAsync();
             }
             return RedirectToAction("Index");
         }
-    }
-
-    public class ProductMetaViewModel {
-        public List<CaseManufacturer> CaseManufacturers { get; set; }
-        public List<PhoneModel> PhoneModels { get; set; }
     }
 }

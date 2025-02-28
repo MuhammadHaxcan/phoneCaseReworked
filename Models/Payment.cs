@@ -15,7 +15,7 @@ namespace phoneCaseReworked.Models {
         public Vendor Vendor { get; set; } // Navigation Property
 
         [Required(ErrorMessage = "Amount is required.")]
-        [Range(1000, 100000, ErrorMessage = "Amount must be between 1000 and 100000.")]
+        [Range(10, 100000, ErrorMessage = "Amount must be between 10 and 100000.")]
         [Column(TypeName = "decimal(10,2)")]
         public decimal Amount { get; set; }
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using phoneCaseReworked.Models;
+using phoneCaseReworked.ViewModels;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -106,17 +107,6 @@ namespace phoneCaseReworked.Controllers {
 
             return View(viewModel);
         }
-    }
-
-    public class PaymentViewModel {
-        public List<Vendor> Vendors { get; set; } = new();
-        public Payment Payment { get; set; }
-    }
-    public class PaymentHistoryViewModel {
-        public List<Vendor> Vendors { get; set; } = new();
-        public int? SelectedVendorId { get; set; }
-        public Vendor SelectedVendor { get; set; }
-        public List<Payment> PaymentHistory { get; set; } = new();
     }
 
 }
