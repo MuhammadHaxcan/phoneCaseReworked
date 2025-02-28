@@ -19,7 +19,8 @@ namespace phoneCaseReworked.Controllers {
                 Products = await _repository.GetAllProductAsync(),
                 PhoneModels = await _repository.GetPhoneModelAsync(),
                 CaseManufacturers = await _repository.GetCaseManufacturerAsync(),
-                Product = id == null ? new Product() : await _repository.GetProductByIdAsync(id)
+                Product = await _repository.GetProductByIdAsync(id) ?? new Product()
+
             };
             return View(viewModel);
         }

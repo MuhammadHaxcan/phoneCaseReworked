@@ -10,6 +10,8 @@ builder.Services.AddDbContext<PhoneCaseDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IProductMetaRepository, SqlProductMetaRepository>();
+builder.Services.AddScoped<IVendorRepository, SqlVendorRepository>();
+
 
 
 var app = builder.Build();

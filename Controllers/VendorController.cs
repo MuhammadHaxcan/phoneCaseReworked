@@ -1,37 +1,38 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using phoneCaseReworked.Models;
+using phoneCaseReworked.Repositories;
 using phoneCaseReworked.ViewModels;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace phoneCaseReworked.Controllers {
     public class VendorController : Controller {
-        private readonly PhoneCaseDbContext _context;
+        private readonly IVendorRepository _vendorRepository;
 
-        public VendorController(PhoneCaseDbContext context) {
-            _context = context;
+        public VendorController(IVendorRepository vendorRepository) {
+            _vendorRepository = vendorRepository;
         }
 
         public async Task<IActionResult> Index() {
-            var vendors = await _context.Vendors.ToListAsync();
+            var vendors = await _vendorRepository.GetAllVendorsAsync();
             return View(new VendorViewModel { Vendors = vendors, NewVendor = new Vendor() });
         }
 
         [HttpPost]
         public async Task<IActionResult> AddVendor(Vendor newVendor) {
             if (!ModelState.IsValid) {
-                var vendors = await _context.Vendors.ToListAsync();
-                return View("Index", new VendorViewModel { Vendors = vendors, NewVendor = newVendor });
+                TempData["ErrorMessage"] = "Please correct the form errors.";
+                return RedirectToAction("Index");
+            }
+
+            if (await _vendorRepository.VendorExistsAsync(newVendor.Name)) {
+                TempData["ErrorMessage"] = "Vendor already exists in the database.";
+                return RedirectToAction("Index");
             }
 
             newVendor.TotalCredit = 0.00m;
+            await _vendorRepository.AddVendorAsync(newVendor);
 
-            _context.Vendors.Add(newVendor);
-            await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Vendor added successfully!";
             return RedirectToAction("Index");
         }
-
     }
-
 }
