@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using phoneCaseReworked.Models;
+using phoneCaseReworked.Repositories;
 using phoneCaseReworked.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,19 +10,19 @@ namespace phoneCaseReworked.Controllers
 {
     public class ProductMetaController : Controller
     {
-        private readonly PhoneCaseDbContext _context;
+        private readonly IProductMetaRepository _repository;
 
-        public ProductMetaController(PhoneCaseDbContext context)
+        public ProductMetaController(IProductMetaRepository repository)
         {
-            _context = context;
+            _repository = repository;
         }
 
         public async Task<IActionResult> Index()
         {
             var viewModel = new ProductMetaViewModel
             {
-                CaseManufacturers = await _context.CaseManufacturers.ToListAsync(),
-                PhoneModels = await _context.PhoneModels.ToListAsync()
+                CaseManufacturers = await _repository.GetCaseManufacturerAsync(),
+                PhoneModels = await _repository.GetPhoneModelAsync()
             };
             return View(viewModel);
         }
@@ -32,8 +33,7 @@ namespace phoneCaseReworked.Controllers
             if (!string.IsNullOrEmpty(name))
             {
                 var manufacturer = new CaseManufacturer { Name = name };
-                _context.CaseManufacturers.Add(manufacturer);
-                await _context.SaveChangesAsync();
+                await _repository.CreateCaseManufacturerAsync(manufacturer);            
             }
             return RedirectToAction("Index");
         }
@@ -44,8 +44,7 @@ namespace phoneCaseReworked.Controllers
             if (!string.IsNullOrEmpty(name))
             {
                 var model = new PhoneModel { Name = name };
-                _context.PhoneModels.Add(model);
-                await _context.SaveChangesAsync();
+                await _repository.CreatePhoneModelAsync(model);
             }
             return RedirectToAction("Index");
         }

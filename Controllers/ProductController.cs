@@ -1,24 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using phoneCaseReworked.Models;
+using phoneCaseReworked.Repositories;
 using phoneCaseReworked.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace phoneCaseReworked.Controllers {
     public class ProductController : Controller {
-        private readonly PhoneCaseDbContext _context;
+        private readonly IProductMetaRepository _repository;
 
-        public ProductController(PhoneCaseDbContext context) {
-            _context = context;
+        public ProductController(IProductMetaRepository repository) {
+            _repository = repository;
         }
 
         public async Task<IActionResult> Index(int? id) {
             var viewModel = new ProductViewModel {
-                Products = await _context.Products.Include(p => p.Model).Include(p => p.CaseManufacturer).ToListAsync(),
-                PhoneModels = await _context.PhoneModels.ToListAsync(),
-                CaseManufacturers = await _context.CaseManufacturers.ToListAsync(),
-                Product = id == null ? new Product() : await _context.Products.FindAsync(id)
+                Products = await _repository.GetAllProductAsync(),
+                PhoneModels = await _repository.GetPhoneModelAsync(),
+                CaseManufacturers = await _repository.GetCaseManufacturerAsync(),
+                Product = id == null ? new Product() : await _repository.GetProductByIdAsync(id)
             };
             return View(viewModel);
         }
@@ -30,16 +31,16 @@ namespace phoneCaseReworked.Controllers {
 
             if (ModelState.IsValid) {
                 if (product.ProductId == 0) {
-                    _context.Products.Add(product);
+                    await _repository.CreateProductAsync(product);
                 } else {
-                    _context.Products.Update(product);
+                    await _repository.UpdateProductAsync(product);
                 }
-                await _context.SaveChangesAsync();
             }
             return RedirectToAction("Index");
         }
 
-        public async Task<IActionResult> EditProduct(int id) {
+        public IActionResult EditProduct(int id)
+        {
             return RedirectToAction("Index", new { id });
         }
     }
