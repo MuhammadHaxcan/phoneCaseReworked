@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using phoneCaseReworked.Models;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
@@ -52,6 +53,19 @@ namespace phoneCaseReworked.Models {
                 .OnDelete(DeleteBehavior.SetNull);
 
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<PhoneModel>()
+                .HasIndex(p => p.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<CaseManufacturer>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<Product>()
+                .HasIndex(p => new { p.CaseName, p.CaseManufacturerId, p.ModelId })
+                .IsUnique();
+
         }
     }
 }

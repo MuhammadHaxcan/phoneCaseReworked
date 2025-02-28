@@ -33,7 +33,16 @@ namespace phoneCaseReworked.Controllers
             if (!string.IsNullOrEmpty(name))
             {
                 var manufacturer = new CaseManufacturer { Name = name };
-                await _repository.CreateCaseManufacturerAsync(manufacturer);            
+                var result = await _repository.CreateCaseManufacturerAsync(manufacturer);
+
+                if (result == null)
+                {
+                    TempData["ErrorMessage"] = "This manufacturer already exists!";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Manufacturer added successfully!";
+                }
             }
             return RedirectToAction("Index");
         }
@@ -44,7 +53,16 @@ namespace phoneCaseReworked.Controllers
             if (!string.IsNullOrEmpty(name))
             {
                 var model = new PhoneModel { Name = name };
-                await _repository.CreatePhoneModelAsync(model);
+                var result = await _repository.CreatePhoneModelAsync(model);
+
+                if (result ==  null)
+                {
+                    TempData["ErrorMessage"] = "This phone model already exists!";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = "Phone model added successfully!";
+                }
             }
             return RedirectToAction("Index");
         }

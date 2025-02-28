@@ -25,19 +25,36 @@ namespace phoneCaseReworked.Controllers {
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveProduct(Product product) {
+        public async Task<IActionResult> SaveProduct(Product product)
+        {
             ModelState.Remove("product.Model");
             ModelState.Remove("product.CaseManufacturer");
 
-            if (ModelState.IsValid) {
-                if (product.ProductId == 0) {
-                    await _repository.CreateProductAsync(product);
-                } else {
-                    await _repository.UpdateProductAsync(product);
+            if (ModelState.IsValid)
+            {
+                Product? result = null;
+
+                if (product.ProductId == 0)
+                {
+                    result = await _repository.CreateProductAsync(product);
                 }
+                else
+                {
+                    result = await _repository.UpdateProductAsync(product);
+                }
+
+                if (result == null)
+                {
+                    TempData["ErrorMessage"] = "A product with the same Case Name, Manufacturer, and Phone Model already exists.";
+                    return RedirectToAction("Index");
+                }
+
+                TempData["SuccessMessage"] = "Product saved successfully!";
             }
+
             return RedirectToAction("Index");
         }
+
 
         public IActionResult EditProduct(int id)
         {

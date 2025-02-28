@@ -37,6 +37,9 @@ namespace phoneCaseReworked.Migrations
 
                     b.HasKey("CaseManufacturerId");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("CaseManufacturers");
                 });
 
@@ -79,6 +82,9 @@ namespace phoneCaseReworked.Migrations
 
                     b.HasKey("ModelId");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("PhoneModels");
                 });
 
@@ -106,6 +112,10 @@ namespace phoneCaseReworked.Migrations
                     b.HasIndex("CaseManufacturerId");
 
                     b.HasIndex("ModelId");
+
+                    b.HasIndex("CaseName", "CaseManufacturerId", "ModelId")
+                        .IsUnique()
+                        .HasFilter("[CaseManufacturerId] IS NOT NULL AND [ModelId] IS NOT NULL");
 
                     b.ToTable("Products");
                 });

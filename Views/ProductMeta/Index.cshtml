@@ -6,6 +6,23 @@
 
 <h2 class="mb-4">@ViewData["Title"]</h2>
 
+<!-- Display Alert Messages -->
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <div class="container">
     <div class="row">
         <!-- Phone Models Section -->
@@ -16,7 +33,6 @@
                     <input type="text" name="name" class="form-control" placeholder="Enter Phone Model" required />
                     <button type="submit" class="btn btn-primary">Add</button>
                 </div>
-                <span class="text-danger" asp-validation-for="PhoneModels"></span>
             </form>
 
             <h4>Phone Models List</h4>
@@ -38,7 +54,6 @@
                     <input type="text" name="name" class="form-control" placeholder="Enter Case Manufacturer" required />
                     <button type="submit" class="btn btn-success">Add</button>
                 </div>
-                <span class="text-danger" asp-validation-for="CaseManufacturers"></span>
             </form>
 
             <h4>Case Manufacturers List</h4>
