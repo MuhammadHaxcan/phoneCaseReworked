@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using phoneCaseReworked.Models;
 using phoneCaseReworked.Repositories;
 using phoneCaseReworked.ViewModels;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace phoneCaseReworked.Controllers {
     public class ProductController : Controller {

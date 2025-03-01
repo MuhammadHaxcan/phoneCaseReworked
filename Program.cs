@@ -11,8 +11,8 @@ builder.Services.AddDbContext<PhoneCaseDbContext>(options =>
 
 builder.Services.AddScoped<IProductMetaRepository, SqlProductMetaRepository>();
 builder.Services.AddScoped<IVendorRepository, SqlVendorRepository>();
-
-
+builder.Services.AddScoped<IPurchaseRepository, SqlPurchaseRepository>();
+builder.Services.AddScoped<IPaymentRepository, SqlPaymentRepository>();
 
 var app = builder.Build();
 

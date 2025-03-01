@@ -7,25 +7,29 @@ using phoneCaseReworked.ViewModels;
 namespace phoneCaseReworked.Controllers {
     public class PurchaseController : Controller {
         private readonly IVendorRepository _vendorRepository;
-        private readonly PhoneCaseDbContext _context;
+        private readonly IProductMetaRepository _productMetaRepository;
+        private readonly IPurchaseRepository _purchaseRepository;
+        private readonly IPaymentRepository _paymentRepository;
 
-        public PurchaseController(IVendorRepository vendorRepository, PhoneCaseDbContext context) {
+        public PurchaseController(
+            IVendorRepository vendorRepository,IProductMetaRepository productMetaRepository,
+            IPurchaseRepository purchaseRepository,IPaymentRepository paymentRepository) {
             _vendorRepository = vendorRepository;
-            _context = context;
+            _productMetaRepository = productMetaRepository;
+            _purchaseRepository = purchaseRepository;
+            _paymentRepository = paymentRepository;
         }
+
 
         public async Task<IActionResult> RecordPurchase(int? purchaseId) {
             var vendors = await _vendorRepository.GetAllVendorsAsync();
-            var products = await _context.Products
-                .Include(p => p.Model)
-                .Include(p => p.CaseManufacturer)
-                .ToListAsync();
+            var products = await _productMetaRepository.GetAllProductAsync();
 
             var viewModel = new PurchaseViewModel {
                 Vendors = vendors,
                 Products = products,
                 Purchase = purchaseId.HasValue
-                    ? await _context.Purchases.FindAsync(purchaseId) ?? new Purchase()
+                    ? await _purchaseRepository.GetPurchaseByIdAsync(purchaseId) ?? new Purchase()
                     : new Purchase()
             };
 
@@ -43,7 +47,7 @@ namespace phoneCaseReworked.Controllers {
 
             if (!ModelState.IsValid || viewModel.SelectedVendorId == 0 || viewModel.Purchase == null) {
                 viewModel.Vendors = await _vendorRepository.GetAllVendorsAsync();
-                viewModel.Products = await _context.Products.ToListAsync();
+                viewModel.Products = await _productMetaRepository.GetAllProductAsync();
                 return View("RecordPurchase", viewModel);
             }
 
@@ -62,15 +66,14 @@ namespace phoneCaseReworked.Controllers {
                 decimal newAmount = purchase.Quantity * purchase.UnitPrice;
                 totalAdjustment = newAmount;
                 vendor.TotalCredit += totalAdjustment;
-                _context.Purchases.Add(purchase);
+                await _purchaseRepository.AddPurchaseAsync(purchase);
             } else {
-                var existingPurchase = await _context.Purchases.FindAsync(purchase.PurchaseId);
+                var existingPurchase = await _purchaseRepository.GetPurchaseByIdAsync(purchase.PurchaseId);
                 if (existingPurchase == null) {
                     return RedirectToAction("ViewPurchaseHistory", new { vendorId = viewModel.SelectedVendorId });
                 }
 
-                bool hasPayments = await _context.Payments
-                    .AnyAsync(p => p.VendorId == existingPurchase.VendorId && p.PaymentDate >= existingPurchase.PurchaseDate);
+                bool hasPayments = await _paymentRepository.HasPaymentsAfterDateAsync(existingPurchase.VendorId, existingPurchase.PurchaseDate);
 
                 if (hasPayments) {
                     ModelState.AddModelError("", "This purchase cannot be edited because a payment has been recorded after this purchase date.");
@@ -78,11 +81,7 @@ namespace phoneCaseReworked.Controllers {
                         Vendors = await _vendorRepository.GetAllVendorsAsync(),
                         SelectedVendor = vendor,
                         SelectedVendorId = viewModel.SelectedVendorId,
-                        PurchaseHistory = await _context.Purchases
-                            .Where(p => p.VendorId == viewModel.SelectedVendorId)
-                            .Include(p => p.Product)
-                            .OrderByDescending(p => p.PurchaseDate)
-                            .ToListAsync()
+                        PurchaseHistory = await _purchaseRepository.GetPurchaseHistoryByVendorAsync(viewModel.SelectedVendorId),
                     };
                     return View("ViewPurchaseHistory", errorViewModel);
                 }
@@ -98,13 +97,14 @@ namespace phoneCaseReworked.Controllers {
                 existingPurchase.UnitPrice = purchase.UnitPrice;
                 existingPurchase.PurchaseDate = purchase.PurchaseDate;
 
-                _context.Purchases.Update(existingPurchase);
+                await _purchaseRepository.UpdatePurchaseAsync(existingPurchase);
             }
-
             await _vendorRepository.UpdateVendorAsync(vendor);
-            await _context.SaveChangesAsync();
+
             return RedirectToAction("ViewPurchaseHistory", new { vendorId = viewModel.SelectedVendorId });
         }
+
+
 
         public async Task<IActionResult> ViewPurchaseHistory(int? vendorId) {
             var viewModel = new VendorPurchaseHistoryViewModel {
@@ -114,11 +114,7 @@ namespace phoneCaseReworked.Controllers {
                     : null,
                 SelectedVendorId = vendorId ?? 0,
                 PurchaseHistory = vendorId.HasValue
-                    ? await _context.Purchases
-                        .Where(p => p.VendorId == vendorId)
-                        .Include(p => p.Product)
-                        .OrderByDescending(p => p.PurchaseDate)
-                        .ToListAsync()
+                    ? await _purchaseRepository.GetPurchaseHistoryByVendorAsync(vendorId)
                     : new()
             };
 
@@ -127,13 +123,12 @@ namespace phoneCaseReworked.Controllers {
 
         [HttpPost]
         public async Task<IActionResult> DeletePurchase(int purchaseId) {
-            var purchase = await _context.Purchases.FindAsync(purchaseId);
+            var purchase = await _purchaseRepository.GetPurchaseByIdAsync(purchaseId);
             if (purchase == null) {
                 return RedirectToAction("ViewPurchaseHistory");
             }
 
-            bool hasPayments = await _context.Payments
-                .AnyAsync(p => p.VendorId == purchase.VendorId && p.PaymentDate >= purchase.PurchaseDate);
+            bool hasPayments = await _paymentRepository.HasPaymentsAfterDateAsync(purchase.VendorId, purchase.PurchaseDate);
 
             if (hasPayments) {
                 ModelState.AddModelError("", "This purchase cannot be deleted because a payment has been recorded after this purchase date.");
@@ -142,11 +137,7 @@ namespace phoneCaseReworked.Controllers {
                     Vendors = await _vendorRepository.GetAllVendorsAsync(),
                     SelectedVendor = await _vendorRepository.GetVendorByIdAsync(purchase.VendorId),
                     SelectedVendorId = purchase.VendorId,
-                    PurchaseHistory = await _context.Purchases
-                        .Where(p => p.VendorId == purchase.VendorId)
-                        .Include(p => p.Product)
-                        .OrderByDescending(p => p.PurchaseDate)
-                        .ToListAsync()
+                    PurchaseHistory = await _purchaseRepository.GetPurchaseHistoryByVendorAsync(purchase.VendorId),
                 };
 
                 return View("ViewPurchaseHistory", errorViewModel);
@@ -158,9 +149,7 @@ namespace phoneCaseReworked.Controllers {
                 vendor.TotalCredit -= amountToDeduct;
                 await _vendorRepository.UpdateVendorAsync(vendor);
             }
-
-            _context.Purchases.Remove(purchase);
-            await _context.SaveChangesAsync();
+            await _purchaseRepository.DeletePurchaseAsync(purchase);            
             return RedirectToAction("ViewPurchaseHistory", new { vendorId = purchase.VendorId });
         }
     }
