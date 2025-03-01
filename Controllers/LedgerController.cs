@@ -53,23 +53,35 @@ namespace phoneCaseReworked.Controllers {
                 .OrderBy(t => t.Date)
                 .ToList();
 
+            // Group transactions by date
+            var groupedTransactions = transactions
+                .GroupBy(t => t.Date)
+                .Select(g => new LedgerTransactionViewModel {
+                    Date = g.Key,
+                    Description = string.Join("|", g.Select(t => t.Description).Distinct()),
+                    Debit = g.Where(t => t.TransactionType == "purchase").Sum(t => t.Debit),
+                    Credit = g.Where(t => t.TransactionType == "payment").Sum(t => t.Credit),
+                    TransactionType = string.Join("|", g.Select(t => t.TransactionType).Distinct()),
+                    PurchaseIds = g.Where(t => t.TransactionType == "purchase").SelectMany(t => t.PurchaseIds).ToList()
+                })
+                .OrderBy(t => t.Date)
+                .ToList();
+
+            // Calculate running balance
             decimal runningBalance = 0;
-            foreach (var transaction in transactions) {
-                if (transaction.TransactionType == "purchase") {
-                    runningBalance += transaction.Debit;
-                } else if (transaction.TransactionType == "payment") {
-                    runningBalance -= transaction.Credit;
-                }
+            foreach (var transaction in groupedTransactions) {
+                runningBalance += transaction.Debit - transaction.Credit;
                 transaction.RemainingBalance = runningBalance;
             }
 
+            // Apply filter
             DateTime filterStartDate = filter switch {
                 "week" => DateTime.Now.AddDays(-7),
                 "month" => DateTime.Now.AddMonths(-1),
                 _ => DateTime.MinValue
             };
 
-            var filteredTransactions = transactions.Where(t => t.Date >= filterStartDate).ToList();
+            var filteredTransactions = groupedTransactions.Where(t => t.Date >= filterStartDate).ToList();
 
             ViewBag.Vendors = await _context.Vendors.ToListAsync();
             ViewBag.SelectedVendor = vendorId;

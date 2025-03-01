@@ -1,11 +1,8 @@
 ﻿@model List<phoneCaseReworked.ViewModels.LedgerTransactionViewModel>
-
 @{
     ViewData["Title"] = "Vendor Ledger";
 }
-
 <h2 class="mb-4">@ViewData["Title"]</h2>
-
 <div class="container">
     <form asp-action="VendorLedger" method="post" class="mb-4">
         <div class="row">
@@ -13,7 +10,8 @@
                 <label class="form-label">Select Vendor</label>
                 <select name="vendorId" class="form-select" required>
                     <option value="">-- Select Vendor --</option>
-                    @foreach (var vendor in ViewBag.Vendors) {
+                    @foreach (var vendor in ViewBag.Vendors)
+                    {
                         <option value="@vendor.VendorId" selected="@(ViewBag.SelectedVendor != null && ViewBag.SelectedVendor == vendor.VendorId ? "selected" : null)">
                             @vendor.Name
                         </option>
@@ -33,8 +31,8 @@
             </div>
         </div>
     </form>
-
-    @if (Model.Any()) {
+    @if (Model.Any())
+    {
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -46,15 +44,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var transaction in Model) {
+                @foreach (var transaction in Model)
+                {
                     <tr>
                         <td>@transaction.Date.ToString("MM/dd/yyyy")</td>
                         <td>
-                            @if (transaction.TransactionType == "purchase" && transaction.PurchaseIds.Any()) {
+                            @if (transaction.TransactionType.Contains("purchase"))
+                            {
                                 <a asp-action="PurchaseDetails" asp-route-purchaseIds="@string.Join(",", transaction.PurchaseIds)">
                                     @transaction.Description
                                 </a>
-                            } else {
+                            }
+                            else
+                            {
                                 @transaction.Description
                             }
                         </td>
@@ -65,7 +67,9 @@
                 }
             </tbody>
         </table>
-    } else {
+    }
+    else
+    {
         <div class="alert alert-info">No transactions found.</div>
     }
 </div>
