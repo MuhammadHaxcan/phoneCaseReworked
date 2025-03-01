@@ -9,6 +9,6 @@ namespace phoneCaseReworked.Repositories {
         Task UpdatePurchaseAsync(Purchase purchase);
         Task DeletePurchaseAsync(Purchase purchase);
         Task AddPurchaseAsync(Purchase purchase);
-
+        Task<decimal> GetTotalPurchasesByVendorAsync(int vendorId, DateTime date);
     }
 }

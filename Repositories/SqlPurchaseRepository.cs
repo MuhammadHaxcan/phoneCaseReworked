@@ -38,5 +38,12 @@ namespace phoneCaseReworked.Repositories {
             await _context.Purchases.AddAsync(purchase);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<decimal> GetTotalPurchasesByVendorAsync(int vendorId, DateTime date) {
+            return await _context.Purchases
+                .Where(p => p.VendorId == vendorId && p.PurchaseDate <= date)
+                .SumAsync(p => p.Quantity * p.UnitPrice);
+        }
+
     }
 }
