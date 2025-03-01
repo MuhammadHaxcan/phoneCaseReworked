@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using phoneCaseReworked.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace phoneCaseReworked.Repositories {
     public class SqlVendorRepository : IVendorRepository {
@@ -23,6 +26,11 @@ namespace phoneCaseReworked.Repositories {
 
         public async Task AddVendorAsync(Vendor vendor) {
             _context.Vendors.Add(vendor);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task UpdateVendorAsync(Vendor vendor) {
+            _context.Vendors.Update(vendor);
             await _context.SaveChangesAsync();
         }
     }
