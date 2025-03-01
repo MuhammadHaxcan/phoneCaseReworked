@@ -22,7 +22,7 @@ namespace phoneCaseReworked.Models {
         public int Quantity { get; set; }
 
         //[Required(ErrorMessage = "Unit price is required.")]
-        [Range(500, 20000, ErrorMessage = "Unit price must be between 500 and 20,000.")]
+        [Range(50, 20000, ErrorMessage = "Unit price must be between 50 and 20,000.")]
         [Column(TypeName = "decimal(10,2)")]
         public decimal UnitPrice { get; set; }
 
