@@ -29,7 +29,7 @@
 
         <div class="mb-3">
             <label asp-for="Payment.PaymentDate" class="form-label">Payment Date</label>
-            <input asp-for="Payment.PaymentDate" type="date" class="form-control" required min="@minDate" max="@maxDate" value="@today" />
+            <input asp-for="Payment.PaymentDate" type="date" class="form-control" required min="@minDate" max="@maxDate" />
             <span asp-validation-for="Payment.PaymentDate" class="text-danger"></span>
         </div>
 
