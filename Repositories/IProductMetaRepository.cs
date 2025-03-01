@@ -14,7 +14,7 @@ namespace phoneCaseReworked.Repositories
 
         // Product
         Task<List<Product>> GetAllProductAsync();
-        Task<Product?> GetProductByIdAsync(int? id);
+        Task<Product> GetProductByIdAsync(int? id);
         Task<Product?> CreateProductAsync(Product product);
         Task<Product?> UpdateProductAsync(Product product);
     }

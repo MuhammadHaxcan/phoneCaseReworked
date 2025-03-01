@@ -33,7 +33,7 @@ namespace phoneCaseReworked.Controllers {
 
             if (ModelState.IsValid)
             {
-                Product? result = null;
+                Product? result;
 
                 if (product.ProductId == 0)
                 {
