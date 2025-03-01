@@ -70,7 +70,7 @@ namespace phoneCaseReworked.Controllers {
                 }
 
                 bool hasPayments = await _context.Payments
-                    .AnyAsync(p => p.VendorId == existingPurchase.VendorId && p.PaymentDate > existingPurchase.PurchaseDate);
+                    .AnyAsync(p => p.VendorId == existingPurchase.VendorId && p.PaymentDate >= existingPurchase.PurchaseDate);
 
                 if (hasPayments) {
                     ModelState.AddModelError("", "This purchase cannot be edited because a payment has been recorded after this purchase date.");
