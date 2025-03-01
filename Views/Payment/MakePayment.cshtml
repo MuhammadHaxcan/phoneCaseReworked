@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Make a Payment";
-    var today = DateTime.UtcNow;
+    var today = DateTime.Now;
     var minDate = today.AddDays(-7).ToString("yyyy-MM-dd"); // ✅ Restrict to last 7 days
     var maxDate = today.ToString("yyyy-MM-dd"); // ✅ No future dates allowed
 }
@@ -29,7 +29,7 @@
 
         <div class="mb-3">
             <label asp-for="Payment.PaymentDate" class="form-label">Payment Date</label>
-            <input asp-for="Payment.PaymentDate" type="date" class="form-control" required min="@minDate" max="@maxDate" />
+            <input asp-for="Payment.PaymentDate" type="date" class="form-control" required min="@minDate" max="@maxDate" value="@today" />
             <span asp-validation-for="Payment.PaymentDate" class="text-danger"></span>
         </div>
 

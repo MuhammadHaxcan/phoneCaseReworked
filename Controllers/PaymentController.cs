@@ -18,7 +18,7 @@ namespace phoneCaseReworked.Controllers {
         public async Task<IActionResult> MakePayment() {
             var viewModel = new PaymentViewModel {
                 Vendors = await _vendorRepository.GetAllVendorsAsync(),
-                Payment = new Payment { PaymentDate = DateTime.UtcNow }
+                Payment = new Payment { PaymentDate = DateTime.Now }
             };
             return View(viewModel);
         }
