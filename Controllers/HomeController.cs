@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using phoneCaseReworked.Models;
 
-
 namespace phoneCaseReworked.Controllers
 {
     public class HomeController : Controller
@@ -14,16 +13,21 @@ namespace phoneCaseReworked.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Stats(int? selectedMonth, int? selectedYear)
+        public async Task<IActionResult> Stats(DateTime? startDate, DateTime? endDate)
         {
-            int currentMonth = selectedMonth ?? DateTime.UtcNow.Month;
-            int currentYear = selectedYear ?? DateTime.UtcNow.Year;
+            // Default to today's date if not provided
+            DateTime currentDate = DateTime.UtcNow.Date;
+            DateTime effectiveStartDate = startDate?.Date ?? currentDate;
+            DateTime effectiveEndDate = endDate?.Date ?? currentDate;
 
-            DateTime startOfMonth = new DateTime(currentYear, currentMonth, 1);
-            DateTime endOfMonth = startOfMonth.AddMonths(1).AddDays(-1);
+            // Ensure end date is not before start date
+            if (effectiveEndDate < effectiveStartDate)
+            {
+                effectiveEndDate = effectiveStartDate;
+            }
 
             var vendorPurchases = await _context.Purchases
-                .Where(p => p.PurchaseDate >= startOfMonth && p.PurchaseDate <= endOfMonth)
+                .Where(p => p.PurchaseDate.Date >= effectiveStartDate && p.PurchaseDate.Date <= effectiveEndDate)
                 .GroupBy(p => p.VendorId)
                 .Select(g => new VendorStatsViewModel
                 {
@@ -33,7 +37,7 @@ namespace phoneCaseReworked.Controllers
                 .ToListAsync();
 
             var vendorPayments = await _context.Payments
-                .Where(p => p.PaymentDate >= startOfMonth && p.PaymentDate <= endOfMonth)
+                .Where(p => p.PaymentDate.Date >= effectiveStartDate && p.PaymentDate.Date <= effectiveEndDate)
                 .GroupBy(p => p.VendorId)
                 .Select(g => new VendorStatsViewModel
                 {
@@ -89,8 +93,8 @@ namespace phoneCaseReworked.Controllers
                 CumulativeTotalPurchases = cumulativeTotalPurchases,
                 CumulativeTotalPayments = cumulativeTotalPayments,
                 CumulativeRemainingCredit = cumulativeRemainingCredit,
-                SelectedMonth = currentMonth,
-                SelectedYear = currentYear
+                StartDate = effectiveStartDate,
+                EndDate = effectiveEndDate
             };
 
             return View(viewModel);
@@ -111,9 +115,10 @@ namespace phoneCaseReworked.Controllers
         public decimal CumulativeTotalPurchases { get; set; }
         public decimal CumulativeTotalPayments { get; set; }
         public decimal CumulativeRemainingCredit { get; set; }
-        public int SelectedMonth { get; set; }
-        public int SelectedYear { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
     }
+
     public class VendorCreditViewModel
     {
         public string VendorName { get; set; } = string.Empty;

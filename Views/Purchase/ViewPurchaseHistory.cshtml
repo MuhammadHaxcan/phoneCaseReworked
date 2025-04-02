@@ -64,7 +64,7 @@
                                 <td class="text-end">Rs. @purchase.UnitPrice</td>
                                 <td class="text-end">Rs. @(purchase.Quantity * purchase.UnitPrice)</td>
                                 <td class="text-end">
-                                    <a asp-action="RecordPurchase" asp-route-purchaseId="@purchase.PurchaseId" class="btn btn-sm btn-warning">Edit</a>
+                                    <a asp-action="EditPurchase" asp-route-purchaseId="@purchase.PurchaseId" class="btn btn-sm btn-warning">Edit</a>
 
                                     <form asp-action="DeletePurchase" method="post" onsubmit="return confirm('Are you sure you want to delete this purchase?');" style="display:inline;">
                                         <input type="hidden" name="purchaseId" value="@purchase.PurchaseId" />

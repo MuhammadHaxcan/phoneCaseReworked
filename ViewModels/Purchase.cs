@@ -6,16 +6,16 @@ namespace phoneCaseReworked.ViewModels
     {
         public int SelectedVendorId { get; set; }
         public DateTime PurchaseDate { get; set; } = DateTime.Now;
-        public System.Collections.Generic.List<Vendor> Vendors { get; set; } = new();
-        public System.Collections.Generic.List<Product> Products { get; set; } = new();
-        public Purchase? Purchase { get; set; }
+        public List<Vendor> Vendors { get; set; } = new();
+        public List<Product> Products { get; set; } = new();
+        public List<Purchase> Purchase { get; set; } = new List<Purchase>();
     }
 
     public class VendorPurchaseHistoryViewModel
     {
-        public System.Collections.Generic.List<Vendor> Vendors { get; set; } = new();
+        public List<Vendor> Vendors { get; set; } = new();
         public int? SelectedVendorId { get; set; }
         public Vendor? SelectedVendor { get; set; }
-        public System.Collections.Generic.List<Purchase> PurchaseHistory { get; set; } = new();
+        public List<Purchase> PurchaseHistory { get; set; } = new();
     }
 }
